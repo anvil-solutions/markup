@@ -5,12 +5,11 @@
     <p>
       TODO: write description
     </p>
-    <form id="form" method="GET" action="./check">
-      <input id="input" aria-label="Web Page URL" name="url" type="text" required>
+    <form method="GET" action="./check">
+      <input aria-label="Web Page URL" name="url" type="text" required>
       <button type="submit" class="btn">Check Now</button>
     </form>
   </div>
-  <iframe id="result" class="card" style="display:none" src="about:blank" title="Result" sandbox></iframe>
   <div class="card">
     <h2>About</h2>
     <p>
@@ -25,4 +24,3 @@
     </nav>
   </div>
 </main>
-<!--script src="./js/main.js" async></script-->

@@ -1,11 +1,11 @@
 <?php
   //error_reporting(E_ALL);
-  require_once('./src/layout/headerBasic.php');
   if (!isset($_GET['url'])) {
     echo '';
     exit;
   }
   if (substr($_GET['url'], 0, 7) !== 'http://' && substr($_GET['url'], 0, 8) !== 'https://') $_GET['url'] = 'http://'.$_GET['url'];
+  require_once('./src/layout/headerBasic.php');
 
   $curl = curl_init();
   curl_setopt($curl, CURLOPT_URL, $_GET['url']);
@@ -22,8 +22,10 @@
   $bodyNode = $doc->getElementsByTagName('body')->item(0);
 
   $illegalTags = [
-    'link', 'script', 'frame', 'iframe', 'img', 'video', 'audio', 'style',
-    'embed', 'object', 'applet'
+    'frame', 'frameset', 'noframes', 'iframe', 'img', 'map', 'area', 'canvas',
+    'figcaption', 'figure', 'picture', 'svg', 'audio', 'source', 'track',
+    'video', 'link', 'style', 'script', 'noscript', 'applet', 'embed', 'object',
+    'param'
   ];
   $nodesToRemove = [];
   foreach ($illegalTags as $tagName) {
@@ -41,7 +43,6 @@
         $node->removeAttribute('class');
         $node->removeAttribute('style');
         $node->removeAttribute('onclick');
-        if ($node->hasAttribute('href')) $node->setAttribute('href', '');
       }
       if ($node->hasChildNodes()) {
           cleanNode($node);

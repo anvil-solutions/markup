@@ -7,4 +7,5 @@
   <link rel="stylesheet" type="text/css" href="./css/basic.min.css" />
   <meta name="description" content="TODO: write description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="<?php echo $_GET['url']; ?>" target="_blank">
 </head>
