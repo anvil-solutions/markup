@@ -3,11 +3,12 @@
   <div class="card">
     <h2>Welcome to Markup</h2>
     <p>
-      TODO: write description
+      Markup is a web app for viewing the structured text of websites without styles or images.
+      Enter a web page url below to start.
     </p>
     <form method="GET" action="./check">
       <input aria-label="Web Page URL" name="url" type="text" required>
-      <button type="submit" class="btn">Check Now</button>
+      <button type="submit" class="btn">View Now</button>
     </form>
   </div>
   <div class="card">
