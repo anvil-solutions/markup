@@ -1,4 +1,15 @@
 <?php
+  const ILLEGAL_TAGS = [
+    'frame', 'frameset', 'noframes', 'iframe', 'img', 'map', 'area', 'canvas',
+    'figcaption', 'figure', 'picture', 'svg', 'audio', 'source', 'track',
+    'video', 'link', 'style', 'script', 'noscript', 'applet', 'embed', 'object',
+    'param'
+  ];
+  const ILLEGAL_ATTRS  = [
+    'align', 'bgcolor', 'border', 'class', 'cols', 'draggable', 'height',
+    'size', 'style', 'width'
+  ];
+
   //error_reporting(E_ALL);
   if (!isset($_GET['url'])) {
     echo '';
@@ -13,36 +24,31 @@
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
   curl_setopt($curl, CURLOPT_HEADER, true);
   $file = curl_exec($curl);
-  $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+  $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
   curl_close($curl);
   while (substr($file, 0, 4) === 'HTTP') list($headers, $file) = explode("\r\n\r\n", $file, 2);
+  if (!str_contains($contentType, 'text/html')) exit;
 
   $doc = new DOMDocument();
   $doc->loadHTML($file);
   $bodyNode = $doc->getElementsByTagName('body')->item(0);
 
-  $illegalTags = [
-    'frame', 'frameset', 'noframes', 'iframe', 'img', 'map', 'area', 'canvas',
-    'figcaption', 'figure', 'picture', 'svg', 'audio', 'source', 'track',
-    'video', 'link', 'style', 'script', 'noscript', 'applet', 'embed', 'object',
-    'param'
-  ];
-  $nodesToRemove = [];
-  foreach ($illegalTags as $tagName) {
-    foreach ($doc->getElementsByTagName($tagName) as $node) {
-      array_push($nodesToRemove, $node);
+  foreach (ILLEGAL_TAGS as $tagName) {
+    foreach (iterator_to_array($doc->getElementsByTagName($tagName)) as $node) {
+      $node->parentNode->removeChild($node);
     }
-  }
-  foreach ($nodesToRemove as $node) {
-    $node->parentNode->removeChild($node);
   }
 
   function cleanNode(DOMNode $domNode) {
     foreach ($domNode->childNodes as $node) {
       if ($node->hasAttributes()) {
-        $node->removeAttribute('class');
-        $node->removeAttribute('style');
-        $node->removeAttribute('onclick');
+        foreach (iterator_to_array($node->attributes) as $attr) {
+          if (
+            in_array($attr->nodeName, ILLEGAL_ATTRS)
+            || str_starts_with($attr->nodeName, 'on')
+            || str_starts_with($attr->nodeName, 'data-')
+          ) $node->removeAttribute($attr->nodeName);
+        }
       }
       if ($node->hasChildNodes()) {
           cleanNode($node);
