@@ -50,9 +50,7 @@
           ) $node->removeAttribute($attr->nodeName);
         }
       }
-      if ($node->hasChildNodes()) {
-          cleanNode($node);
-      }
+      if ($node->hasChildNodes()) cleanNode($node);
     }
   }
   cleanNode($doc);
